@@ -20,18 +20,28 @@
 var http = require('http');
 var jade = require('jade');
 var port = process.argv[2];
+var mountPath = '/home';
+var fakeExp = {};
+fakeExp.initialise = function(req, res) {
+    this.req = req;
+    this.res = res;
+};
+
+// Not smart, as will return error if it's simply not '/home', but '/contact-us' instead. 
+// unless accesses chained mountPaths? TMD SB (too much dude step back) 
+fakeExp.get = function(mountPath, callback) {
+    this.res.end(this.req.url === mountPath && callback()); //this should be fakeexp which has the req. 
+}
 
 var myServer = http.createServer(function(req, res) {
-    var html = jade.renderFile(__dirname + '/templates/index.jade', { date: new Date().toDateString() });
-    res.end(html);
+    fakeExp.initialise(req, res);
+    fakeExp.get(mountPath, function() {
+        return jade.renderFile(__dirname + '/templates/index.jade', { date: new Date().toDateString() });
+    });
 }).listen(port);
 
 // // Modular function checker, test this out later. otherwise too many moving parts.
-// // access to req, res objs may be issue. Closure or pass by argument, pass by obj..?   
-// var pathSpecific = function(mountPath, callback) {
-//     if (req.url = mountPath) {
-//         callback();
-//     }
-// }
+// access to req, res objs may be issue. Closure or pass by argument, pass by obj..?   
+
 
 // Express solution with Promises
