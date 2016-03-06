@@ -1,46 +1,47 @@
 var express = require('express');
 var crypto = require('crypto');
-
+var initialMountPath = '/message/:RESTOFPATH';
 var app = express();
 
-app.put('/message/:RESTOFPATH', function(req, res) {
-    // WHOOPS - the whole after message dir is the message id... lol 
+// Superfluous function for demonstrative purpose only. 
 
-    // FIRST i'll do it all internally inside app.put req handler.
-    // THEN i'll write it out as express middlewar.
-    // FINALLY i'll use the req.param middleware advised below.. 
-    // console.log(req.url);
-    // console.log('whole message param is: ' + req.params.RESTOFPATH);
-    var id = req.params.RESTOFPATH;
-    // id = /\d{3}/.exec(id)[0];  // No need to search for specific digits. 
-    // WHOLE thing is the message id apparently. 
-    // console.log('id is now: ' + id);
+function urlPrinter(req, res, next){
+    console.log(req.url);
+    next(); 
+}
 
+function extractId(req, res, next) {
+    console.log('restof path: ' + req.params.RESTOFPATH);
+    req.messageId = req.params.RESTOFPATH || null;
+    console.log('inside extractId middlewar, messageId is: ' + req.messageId);
+    if (req.messageId) {
+        return next(); // does return do anything here?
+    }
+    throw new Error('req.messageId is falsy!');
+}
+
+function encryptWithSha(req, res, next) {
     var encryptedDateID = crypto.createHash('sha1')
-        .update(new Date().toDateString() + id)
+        .update(new Date().toDateString() + req.messageId)  // I forgot to add the date to the data. 
         .digest('hex');
 
-    res.end(encryptedDateID);
-    // var id = '';
+    req.messageId = encryptedDateID;
+    console.log('inside encryptWithSha middleware, messageId is: ' + req.messageId);
+    next(); // should I do next && next(); ?? as check for no more next middleware? 
+    // actually if no more middleware, then res.end() ? 
+}
 
-    // var hashedData = crypto.createHash('sha1')
-    //     .update(new Date().toDateString() + id)
-    //     .digest('hex');
-
+app.use(urlPrinter); // for debugging purposes .. 
+app.use(initialMountPath, extractId); // so app.use is not strict with mountPath
+// ... but app.put is. 
+app.use(encryptWithSha);
+app.put('/message/*', function(req, res) {
+    console.log('Entered app put');
+    res.end(req.messageId);
 }).listen(process.argv[2]);
 
 
-
-// // Express.js apps can also be mounted to paths that contain a variable by
-// // prepending a: to the beginning of a variable name.For instance, in
-// //     the following, app handles PUT requests in any subdirectory of / path / :
-
-//     app.put('/path/:NAME', function(req, res) { /* ... */ });
-
-// The given variable is then stored in req.params.So, to extract
-// parameters from within the request handlers, use:
-
-//     req.params.NAME
+// NEXT challenge is to to use the below. 
 
 // BONUS
 
