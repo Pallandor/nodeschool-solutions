@@ -19,15 +19,17 @@ var path = require('path');
 var port = process.argv[2];
 var app = express();
 
-app.use(stylus.middleware({
-	src: process.argv[3],
-	dest: process.argv[3]
-}));
-app.use(express.static(process.argv[3]+'/public'));
+console.log(__dirname);
 
-app.get('/main.css', function(req, res) {
-    res.end();
-}).listen(port);
+// doesn't distinguish by get.. which means express static before app.get
+// is doing all the heavy lifting.. 
+app.use(stylus.middleware(__dirname + '/public')); //later add path.join TMMP 
+app.use(express.static(__dirname + '/public'));
+app.listen(port); 
+
+// app.get('/main.css', function(req, res) {
+//     res.end();
+// }).listen(port);
 
 // You could also create your own folder and use these, if you like:
 
