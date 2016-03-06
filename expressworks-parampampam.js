@@ -1,38 +1,20 @@
-//  Master Express.js and have fun!
-// ─────────────────────────────────
-//  PARAM PAM PAM
-//  Exercise 6 of 8
-
-// This exercise is about using URL parameters.
-// For example, if you have /message/526aa677a8ceb64569c9d4fb, then you should know how to
-// extract that value which is an ID of the message.
-
-// Create an Express.js server that processes PUT /message/:id requests
-// // and produces a SHA-1 hash of the current date combined with the ID from the URL.
-
-// For instance,
-// if the server receives
-
-// PUT / message / 526 aa677a8ceb64569c9d4fb
-
-// it will respond with a hash of the current date(as a string) and the ID.
-
 var express = require('express');
 var crypto = require('crypto');
 
 var app = express();
 
 app.put('/message/:RESTOFPATH', function(req, res) {
-    // console.log(req.url);
-    // console.log("now for req.params.RESOFPATH");
-    // console.log(req.params.RESTOFPATH);
+    // WHOOPS - the whole after message dir is the message id... lol 
 
     // FIRST i'll do it all internally inside app.put req handler.
     // THEN i'll write it out as express middlewar.
     // FINALLY i'll use the req.param middleware advised below.. 
-
+    // console.log(req.url);
+    // console.log('whole message param is: ' + req.params.RESTOFPATH);
     var id = req.params.RESTOFPATH;
-    id = /\d{3}/.exec(id)[0]; 
+    // id = /\d{3}/.exec(id)[0];  // No need to search for specific digits. 
+    // WHOLE thing is the message id apparently. 
+    // console.log('id is now: ' + id);
 
     var encryptedDateID = crypto.createHash('sha1')
         .update(new Date().toDateString() + id)
