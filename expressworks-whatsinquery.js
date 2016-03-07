@@ -28,16 +28,10 @@ var app = express();
 // 3: regexp
 // 4: expected no, of chars slice. 
 
-app.use(bodyparser.urlencoded({extended:true})); // func returns func? 
+// app.use(bodyparser.urlencoded({extended:true})); // func returns func? 
 
 app.get('/search', function(req, res) {
-    //  console.log('QUERYSTR IS: ' + QUERYSTR); // str vers of query
-    // console.log(req.params);
-    // var obj = querystring.parse(req.url);
-    // console.log(obj);
-    var obj = querystring.parse(req.url.substr(9)); 
-    // console.log(JSON.parse(obj)); 
-    res.end(JSON.stringify(obj)); 
+	res.end(JSON.stringify(req.query)); 
 }).listen(process.argv[2]);
 
 // // Use app.get('/search', function(){...}) for the route.
