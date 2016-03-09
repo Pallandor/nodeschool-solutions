@@ -5,7 +5,9 @@ var thresholdAge = process.argv[2];
 var url = 'mongodb://localhost:27017/data'; // does it need to connect to the dbpath? 
 
 mongoClient.connect(url, function(err, db) {
-    db.collection('parrots', function(err, coll) {
+    db.collection('parrots', { strict: true }, function(err, coll) { // PASSING strict true object
+        // to throw if collection doesnt exist...
+        if (err) throw new Error('err because coll doesnt exist maybe..');
         coll.find({ age: { $gt: +thresholdAge } })
             // returns all documents in the collection that match the query object.
             .toArray(function(err, docsArr) {
@@ -20,8 +22,10 @@ mongoClient.connect(url, function(err, db) {
                 });
                 console.log(modifiedDocs);
             });
+
+        db.close(); // once finish with db instance, close out. // Maybe move this into collection
+        // callback. Doing that now.. 
     });
-    db.close(); // once finish with db instance, close out. 
 });
 
 // The difference from the last lesson will be that we only want the
