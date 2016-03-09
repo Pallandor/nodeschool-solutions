@@ -18,22 +18,25 @@ var mongo = require("mongodb");
 var mongoClient = mongo.MongoClient;
 var queryUrl = 'mongodb://localhost:27017/learnyoumongo';
 
-//whats in rpocess.arv2
 var thresholdAge = process.argv[2];
 
 mongoClient.connect(queryUrl, {}, function(err, db) {
-    if (err) throw err; 
-    var col1 = db.collection('parrots'); // parrots collection?
-    col1.find() // does this need config object passed? does config object accept col name..?? 
+    if (err) throw err;
+    var col1 = db.collection('parrots');
+    col1.find()
         .toArray(function(err, docs) {
-            docs.forEach(function(val, ind, arr) {
-                //first see waht each doc array object is made up of
-                console.log(val); //val in key value pair 
-                // (val > process.argv[2]) && console.log(val); 
+            // console.log('Threshold Age is: ' + thresholdAge); 
+            docs.forEach(function(item) {
+                // console.log('this item\'s age is: ' + item.age);
+                if (item.age > thresholdAge) {
+                    console.log([item]); // they'r expecting the oboj in an array.. 
+                    // I assume because they passed a query oboject to the find method
+                    // like {age: 10} or something... so toArray already contained
+                    // their filtered array. and then they just console logged it. 
+                }
             });
             db.close();
         });
-    // are docs in db collections always objects? 
 });
 
 
