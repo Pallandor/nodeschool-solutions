@@ -1,17 +1,4 @@
-//  Learn MongoDB
-// ───────────────
-//  FIND
-//  Exercise 3 of 9
-
-// Here we will learn how to search for documents.
-
-// For all of the exercises, the database is learnyoumongo.
-// So, the url would be something like: mongodb://localhost:27017/learnyoumongo
-
-// Use the parrots collection to find all documents where age
-// is greater than the first argument passed to your script.
-
-// Using console.log, print the documents to stdout.
+// Mongodb Solution
 
 var mongo = require("mongodb");
 
@@ -19,25 +6,44 @@ var mongoClient = mongo.MongoClient;
 var queryUrl = 'mongodb://localhost:27017/learnyoumongo';
 
 var thresholdAge = process.argv[2];
+// console.log(thresholdAge); 
 
-mongoClient.connect(queryUrl, {}, function(err, db) {
-    if (err) throw err;
+mongoClient.connect(queryUrl, function(err, db) {
+    // if (err) throw err;
     var col1 = db.collection('parrots');
-    col1.find()
-        .toArray(function(err, docs) {
-            // console.log('Threshold Age is: ' + thresholdAge); 
-            docs.forEach(function(item) {
-                // console.log('this item\'s age is: ' + item.age);
-                if (item.age > thresholdAge) {
-                    console.log([item]); // they'r expecting the oboj in an array.. 
-                    // I assume because they passed a query oboject to the find method
-                    // like {age: 10} or something... so toArray already contained
-                    // their filtered array. and then they just console logged it. 
-                }
-            });
-            db.close();
-        });
+
+//ONLY NEW TEST IS USING TREHSOLD AGE INSTEAD OF A FIXED VALUE... 
+// THATS WHY, VARIABLES PROBABLY NEED A PLUS SIGN... I BET.. 
+//THAT'S IT god. I wonder if thats mongodb API specific or JS standard...
+// it's so not JS standard. JS objects can accept normal variable names for
+// object properties.
+    col1.find({age:{$gt:+thresholdAge}}).toArray(function(err, docsArr) {
+        console.log(docsArr); 
+        db.close();
+    });
+
 });
+// too many cursor ops?
+// replaced tresholdAge with fixed val
+// 
+
+
+
+//     col1 //  .rewind()   // did I need to add rewind to reset the cursor? 
+//     .find({ age: { $gt: thresholdAge } }) // obj literal doesn't need quotations.. 
+//         .toArray(function(err, docs) {
+//             console.log('toArray was called..');
+//             docs.forEach(function(val) {
+//                     console.log(val); //should only print the 1 coll doc that passes query obj. 
+//                 })
+//                 // docs.forEach(function(item) {    // remember they wanted the single item in arr...
+//                 //     console.log(item); 
+//                 // });
+//             db.close();
+//         });
+// });
+
+// only works when i hard del data dir. 
 
 
 
