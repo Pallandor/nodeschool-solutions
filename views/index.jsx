@@ -36,11 +36,13 @@ class TodoList extends React.Component {
 
 	var Todo = React.createClass({
 		getInitialState(){
-			return {checked: false}; 
+			return (
+			{checked: false}
+			) 
 		},
 
 		handleChange(e){
-			this.setState({checked:e.target.checked});
+			this.setState({checked:e.target.checked}); // shouldn't this rerender stuff? 
 		},
 
 		render(){
@@ -49,10 +51,10 @@ class TodoList extends React.Component {
 				<td style={style.cellContent}>
 					<input type='checkbox' checked={this.state.checked} onChange={this.handleChange}/>
 				</td>
-				<td style={style.cellContent}>
+				<td style={Object.assign(style.cellContent, (this.state.checked ? style.checked: style.notChecked))}>
 					{this.props.title}
 				</td>
-				<td style={style.cellContent}>
+				<td style={this.state.checked ? style.checked : style.notChecked}>
 					{this.props.children}
 				</td>
 			</tr>
@@ -60,10 +62,8 @@ class TodoList extends React.Component {
 	}
 })
 
-//so it's a prop that takes an object with validators..
 Todo.propTypes = {
-	title: React.PropTypes.string.isRequired,
-	//children: React.PropTypes.string.isRequired
+	title: React.PropTypes.string.isRequired
 };
 
 var TodoForm = React.createClass({
@@ -73,6 +73,12 @@ var TodoForm = React.createClass({
 });
 
 let style = {
+	checked: {
+		textDecoration: 'line-through'
+	},
+	notChecked: {
+		textDecoration: 'none'
+	},
 	tableContent: {
 		border: '2px solid black'
 	},
@@ -81,5 +87,3 @@ let style = {
 	}
 }; 
 
-
-// export default Test; 
