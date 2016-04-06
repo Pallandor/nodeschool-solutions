@@ -41,7 +41,7 @@ class TodoList extends React.Component {
             super(props);
             this.state = {
                 data: this.props.data,
-                titleValue: "denknknk",
+                titleValue: "",
                 detailValue: ""
             };
             this.changeTitle = this.changeTitle.bind(this);
@@ -75,17 +75,12 @@ class TodoList extends React.Component {
          	detail: this.state.detailValue
          };
          // merge current data and newdata
-         var updatedData = this.state.data.slice().concat(newData); // more perform wouldn't
-         // it be? If smaller obj is on the right, as this would loop through smallest obj
-         // to add its props to the largest? .. yeah. 
-
-         // what is updatedData after the assignmetns
-         console.log(updatedData); 
+         var updatedData = this.state.data.slice().concat(newData);
 
          this.setState({
          	data: updatedData
          }, ()=>{
-         	// once state has rendered the update wipe the current values in the input boxes
+         	// once state has async-ly rendered the update, wipe the current values in the input boxes
          	this.setState({
          		titleValue: '',
          		detailValue: '' 
